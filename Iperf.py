@@ -14,6 +14,7 @@ class Ipref:
                    "result": {},
                    "status": ""
                    }
+        self.serverresultconnect = 0
 
 
     def setTime(self, time):
@@ -33,6 +34,7 @@ class Ipref:
         proc = subprocess.Popen(self.commandServer)
         proc.wait()
         res = proc.communicate()
+        self.serverresultconnect = proc.returncode
         return proc.returncode
 
     def makeCommandClient(self):
@@ -43,6 +45,7 @@ class Ipref:
         return self.commandClient
 
     def startClient(self):
+
         proc = subprocess.Popen(self.commandClient, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.wait()
         self.result= proc.communicate()
@@ -57,13 +60,21 @@ class Ipref:
 
 
     def parse(self):
-       arr = str(self.result[0])
+       if self.serverresultconnect != 0:
+           self.dictout["error"] = "server connection error"
+           self.dictout["status"] = "-1"
+           json_data = json.dumps(self.dictout, indent=4)
+           print json_data
+           return -1
 
+       arr = str(self.result[0])
        error = re.findall(r'error', arr)
        if error != []:
            errlis = re.split('-',arr)
            self.dictout["error"] = errlis[1]
            self.dictout["status"] = "-1"
+           json_data = json.dumps(self.dictout, indent=4)
+           print json_data
            return -1
 
        lis = list(re.split('\n', arr))
