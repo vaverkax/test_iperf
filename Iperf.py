@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import json
 import re
 
@@ -31,11 +30,16 @@ class Ipref:
         return self.commandServer
 
     def startServer(self):
-        proc = subprocess.Popen(self.commandServer)
-        proc.wait()
-        res = proc.communicate()
-        self.serverresultconnect = proc.returncode
-        return proc.returncode
+        try:
+            subprocess.check_call(self.commandServer)
+        except subprocess.CalledProcessError as err:
+            print err.output
+            return err.returncode
+        except OSError:
+            return -1
+        finally:
+            self.serverresultconnect = 0
+            return 0
 
     def makeCommandClient(self):
         commandClient = ['iperf3', '-c', self.host, '-t', self.time]
@@ -45,19 +49,31 @@ class Ipref:
         return self.commandClient
 
     def startClient(self):
-
         proc = subprocess.Popen(self.commandClient, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.wait()
-        self.result= proc.communicate()
-        return proc.returncode
+        if proc.returncode == 0:
+            self.result = proc.communicate()
+            return 0
+        else:
+            print "Client Connection error"
+            return 1
+
+
+
+
 
 
     def stop(self):
         command = ['ssh', '-n', self.host, 'pkill', 'iperf3']
-        res = subprocess.call(command)
-        return res
-
-
+        try:
+            subprocess.check_call(command)
+        except subprocess.CalledProcessError as err:
+                print err.output
+                return err.returncode
+        except OSError:
+            return -1
+        finally:
+            return 0
 
     def parse(self):
        if self.serverresultconnect != 0:
