@@ -3,7 +3,7 @@ from Iperf import *
 import sys
 
 
-if len(sys.argv) != 2:
+if len(sys.argv) < 2:
     print "usage: python start.py host"
     sys.exit()
 

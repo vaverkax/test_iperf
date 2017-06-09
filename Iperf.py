@@ -59,7 +59,6 @@ class Ipref:
     def parse(self):
        arr = str(self.result[0])
 
-
        error = re.findall(r'error', arr)
        if error != []:
            errlis = re.split('-',arr)
@@ -86,10 +85,11 @@ class Ipref:
        self.dictout["result"] = ""
        self.dictout["result"] = data
        self.dictout["status"] = "0"
-       print json.dumps(self.dictout, indent = 4)
+       json_data = json.dumps(self.dictout, indent = 4)
+       print json_data
 
 
-       return 0
+       return json_data
 
 
 
