@@ -4,20 +4,19 @@ import sys
 import argparse
 
 
-if len(sys.argv) < 2:
-    print "usage: python start.py host"
-    sys.exit()
+parser = argparse.ArgumentParser(description="Testing network utility.")
+parser.add_argument("host", help="Host address", type=str)
+parser.add_argument("-t", help="Set time for testing", default=10)
+parser.add_argument("-u", help="Set UDP type", action="store_true")
+args = parser.parse_args()
 
-host = sys.argv[1]
+
+host = args.host
 
 srv = Ipref(host)
+srv.setTime(args.t)
 
-if len(sys.argv) == 3:
-    srv.setTime(sys.argv[2])
-else:
-    srv.setTime('10')
-
-if len(sys.argv) == 4:
+if args.u:
     srv.setType("-u")
 
 srv.makeCommandClient()
