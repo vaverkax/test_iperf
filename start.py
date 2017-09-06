@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from Iperf import *
 
@@ -16,9 +17,15 @@ if __name__ == "__main__":
     if args.u:
         srv.set_type("-u")
 
-    srv.make_command_client()
-    srv.make_command_server()
-    srv.start_server()
-    srv.start_client()
-    srv.parse()
-    srv.stop()
+    try:
+        srv.make_command_client()
+        srv.make_command_server()
+        srv.start_server()
+        #srv.start_client()
+        srv.parse()
+        srv.stop()
+    except Exception as err:
+        sys.stderr.write(err.message)
+        sys.exit(1)
+    finally:
+        sys.exit(0)
