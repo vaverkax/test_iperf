@@ -21,7 +21,7 @@ if __name__ == "__main__":
         srv.make_command_client()
         srv.make_command_server()
         srv.start_server()
-        #srv.start_client()
+        srv.start_client()
         srv.parse()
         srv.stop()
     except Exception as err:
